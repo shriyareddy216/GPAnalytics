@@ -400,4 +400,88 @@
       </div>
     </section>
   </div>
+    <script>
+    const tbody = document.querySelector("#cgpaTable tbody");
+
+    async function loadSubjects() {
+      const username = sessionStorage.getItem("erp_username");
+      const password = sessionStorage.getItem("erp_password");
+
+      if (!username || !password) {
+        alert("⚠️ Please login again.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:3000/fetch-data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || "Failed to fetch subjects");
+        }
+
+        // Insert subjects into table
+        data.subjects.forEach(sub => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${sub}</td>
+            <td><input type="number" min="1" max="5" placeholder="Credits"></td>
+            <td><input type="number" min="0" max="30" placeholder="ST-1"></td>
+            <td><input type="number" min="0" max="30" placeholder="ST-2"></td>
+            <td><input type="number" min="0" max="30" placeholder="ST-3"></td>
+            <td><input type="number" min="0" max="100" placeholder="%"></td>
+            <td><input type="number" min="0" max="30" placeholder="Mid-1"></td>
+            <td><input type="number" min="0" max="30" placeholder="Mid-2"></td>
+            <td>
+              <select>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      } catch (err) {
+        console.error(err);
+        alert("❌ Error loading subjects: " + err.message);
+      }
+    }
+
+    document.getElementById("calculateBtn").addEventListener("click", () => {
+      let totalCredits = 0;
+      let weightedSum = 0;
+
+      document.querySelectorAll("#cgpaTable tbody tr").forEach(row => {
+        const credits = parseFloat(row.cells[1].querySelector("input").value) || 0;
+        const st1 = parseFloat(row.cells[2].querySelector("input").value) || 0;
+        const st2 = parseFloat(row.cells[3].querySelector("input").value) || 0;
+        const st3 = parseFloat(row.cells[4].querySelector("input").value) || 0;
+        const attendance = parseFloat(row.cells[5].querySelector("input").value) || 0;
+        const mid1 = parseFloat(row.cells[6].querySelector("input").value) || 0;
+        const mid2 = parseFloat(row.cells[7].querySelector("input").value) || 0;
+        const difficulty = row.cells[8].querySelector("select").value;
+
+        let score = st1 + st2 + st3 + mid1 + mid2 + (attendance / 10);
+
+        if (difficulty === "medium") score *= 0.95;
+        if (difficulty === "hard") score *= 0.9;
+
+        weightedSum += score * credits;
+        totalCredits += credits;
+      });
+
+      const cgpa = totalCredits ? (weightedSum / totalCredits / 10).toFixed(2) : 0;
+      document.getElementById("result").innerHTML = `🎓 Estimated CGPA: <b>${cgpa}</b>`;
+    });
+
+    // Auto-load on page open
+    loadSubjects();
+  </script>
 </html>
