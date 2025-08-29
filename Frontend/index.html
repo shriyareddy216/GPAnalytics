@@ -4,19 +4,241 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ERP Data Fetcher</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-2: #1a2438;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --brand: #7c3aed;
+      --brand-2: #6d28d9;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #0ea5e9;
+      --radius: 16px;
+      --shadow: 0 10px 24px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.25);
+      --gradient: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(ellipse at top left, #1e293b 0%, #0f172a 70%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .card {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: var(--gradient);
+    }
+
+    .card__header {
+      padding: 28px 28px 10px;
+    }
+
+    .card__header h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .form {
+      padding: 20px 28px 28px;
+      display: grid;
+      gap: 20px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--panel-2);
+      color: var(--text);
+      outline: none;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
+    input:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 24px;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: var(--gradient);
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer a {
+      color: var(--brand);
+      text-decoration: none;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .logo__icon {
+      width: 48px;
+      height: 48px;
+      background: var(--gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo__text {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .logo__gradient {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    @media (max-width: 480px) {
+      .card__header {
+        padding: 24px 24px 10px;
+      }
+      
+      .form {
+        padding: 20px 24px 24px;
+      }
+      
+      .logo__icon {
+        width: 40px;
+        height: 40px;
+      }
+      
+      .logo__text {
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
   <main class="wrap">
+    <div class="logo">
+      <div class="logo__icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 6H20M4 12H20M4 18H20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo__text">GPA<span class="logo__gradient">nalytics</span></div>
+    </div>
+    
     <section class="card">
       <header class="card__header">
-        <h1>GPAnalytics</h1>
-        <p class="muted">Login with ERP credentials and check your previous and upcoming GPA.</p>
+        <h1>Welcome Back</h1>
+        <p class="muted">Login with your ERP credentials to access your academic performance analytics.</p>
       </header>
 
       <form id="fetch-form" class="form" onsubmit="event.preventDefault(); goNext();">
         <div class="field">
-          <label for="username">Username</label>
+          <label for="username">Student ID</label>
           <input id="username" type="text" placeholder="1601XXXXXXXX" required />
         </div>
 
@@ -25,11 +247,18 @@
           <input id="password" type="password" placeholder="••••••••" required />
         </div>
 
-        <div class="row">
-          <button class="btn" type="submit">Go to CGPA Page</button>
-        </div>
+        <button class="btn" type="submit">
+          <span>Continue to Dashboard</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </form>
     </section>
+    
+    <div class="footer">
+      <p>By continuing, you agree to our <a href="#">Terms of Service</a></p>
+    </div>
   </main>
 
   <script>
