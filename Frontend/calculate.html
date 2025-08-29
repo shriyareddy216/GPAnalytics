@@ -5,163 +5,399 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CGPA Calculation</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
+    <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-2: #1a2438;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --brand: #7c3aed;
+      --brand-2: #6d28d9;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #0ea5e9;
+      --radius: 16px;
+      --shadow: 0 10px 24px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.25);
+      --gradient: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(ellipse at top left, #1e293b 0%, #0f172a 70%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Navbar styling */
+    .navbar {
+      background: var(--panel);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .navbar h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+      font-size: 14px;
+    }
+    
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    body {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
     .container {
-      max-width: 95%;
+      flex: 1;
+      max-width: 1200px;
       margin: 30px auto;
       padding: 20px;
+      width: 100%;
     }
+
+    .card {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: var(--gradient);
+    }
+
+    .card__header {
+      padding: 24px 24px 16px;
+    }
+
+    .card__header h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .alert {
+      padding: 14px 18px;
+      border-radius: 12px;
+      margin: 0 24px 20px;
+      border: 1px solid transparent;
+      background: rgba(255,255,255,.04);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .alert--error { 
+      border-color: rgba(239, 68, 68, .5); 
+      background: rgba(239, 68, 68, .14); 
+      color: #ffdede; 
+    }
+    
+    .alert--info { 
+      border-color: rgba(14, 165, 233, .5); 
+      background: rgba(14, 165, 233, .14); 
+      color: #e8f4ff; 
+    }
+    
+    .alert--success { 
+      border-color: rgba(16, 185, 129, .5); 
+      background: rgba(16, 185, 129, .14); 
+      color: #e7fff5; 
+    }
+    
+    .hidden { 
+      display: none !important; 
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      background: #fff;
-      border-radius: 10px;
+      background: var(--panel-2);
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      margin: 0 0 24px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+    
     th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
+    
     th {
-      background: #007BFF;
-      color: white;
+      background: rgba(124, 58, 237, 0.15);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
     }
-    td input, td select {
-      width: 90%;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    
+    tr:last-child td {
+      border-bottom: none;
     }
-    #calculateBtn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      border: none;
+    
+    tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
       border-radius: 8px;
-      background: #007BFF;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--panel);
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+    
+    input:focus, select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+    }
+    
+    input::placeholder {
+      color: #64748b;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 12px;
+      background: var(--gradient);
       color: white;
-      font-size: 16px;
+      font-weight: 600;
+      font-size: 15px;
       cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+      margin: 0 24px 24px;
     }
-    #calculateBtn:hover {
-      background: #0056b3;
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    #result {
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .result {
+      padding: 20px 24px;
+      background: var(--panel-2);
+      border-radius: 12px;
+      margin: 0 24px 24px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .result h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    
+    .result-value {
+      font-size: 42px;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .instructions {
+      padding: 0 24px 24px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .instructions ul {
+      padding-left: 20px;
+      margin: 12px 0;
+    }
+    
+    .instructions li {
+      margin-bottom: 6px;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 14px 16px;
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .nav-links {
+        gap: 16px;
+      }
+      
+      .container {
+        margin: 20px auto;
+        padding: 16px;
+      }
+      
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+      
+      .card__header {
+        padding: 20px 20px 12px;
+      }
+      
+      th, td {
+        padding: 12px;
+        font-size: 13px;
+      }
+      
+      input, select {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+      
+      .btn {
+        margin: 0 20px 20px;
+        width: calc(100% - 40px);
+      }
+      
+      .result {
+        margin: 0 20px 20px;
+      }
+      
+      .instructions {
+        padding: 0 20px 20px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- 🔹 Navbar -->
+  <nav class="navbar">
+    <h2>GPAnalytics Dashboard</h2>
+    <div class="nav-links">
+      <a href="cgpa.html">Previous Data</a>
+      <a href="calculate.html" style="color: var(--brand);">Calculate CGPA</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </nav>
+
   <div class="container">
-    <h1>📊 CGPA Calculator</h1>
-    <table id="cgpaTable">
-      <thead>
-        <tr>
-          <th>Subject</th>
-          <th>Credits</th>
-          <th>ST-1</th>
-          <th>ST-2</th>
-          <th>ST-3</th>
-          <th>Attendance (%)</th>
-          <th>Mid-1</th>
-          <th>Mid-2</th>
-          <th>Semester Difficulty</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Subjects will be inserted here -->
-      </tbody>
-    </table>
-    <button id="calculateBtn">Calculate CGPA</button>
-    <div id="result"></div>
+    <section class="card">
+      <header class="card__header">
+        <h1>📊 CGPA Calculator</h1>
+        <p class="muted">Estimate your CGPA by entering your subject scores and credits.</p>
+      </header>
+
+      <div id="alert" class="alert hidden">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 9V11M12 15H12.01M5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span id="alert-message"></span>
+      </div>
+
+      <div class="instructions">
+        <p>Fill in the details for each subject:</p>
+        <ul>
+          <li><strong>Credits:</strong> The credit weight of the subject (1-5)</li>
+          <li><strong>ST-1, ST-2, ST-3:</strong> Scores for semester tests (0-30)</li>
+          <li><strong>Attendance:</strong> Percentage of classes attended (0-100)</li>
+          <li><strong>Mid-1, Mid-2:</strong> Midterm exam scores (0-30)</li>
+          <li><strong>Difficulty:</strong> Select the perceived difficulty of the subject</li>
+        </ul>
+      </div>
+
+      <table id="cgpaTable">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Credits</th>
+            <th>ST-1</th>
+            <th>ST-2</th>
+            <th>ST-3</th>
+            <th>Attendance (%)</th>
+            <th>Mid-1</th>
+            <th>Mid-2</th>
+            <th>Difficulty</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Subjects will be inserted here -->
+        </tbody>
+      </table>
+
+      <button id="calculateBtn" class="btn">
+        <span class="btn__text">Calculate CGPA</span>
+        <div class="btn__spinner"></div>
+      </button>
+
+      <div id="result" class="result hidden">
+        <h3>Estimated CGPA</h3>
+        <div id="cgpaValue" class="result-value">—</div>
+      </div>
+    </section>
   </div>
-
-  <script>
-    const tbody = document.querySelector("#cgpaTable tbody");
-
-    async function loadSubjects() {
-      const username = sessionStorage.getItem("erp_username");
-      const password = sessionStorage.getItem("erp_password");
-
-      if (!username || !password) {
-        alert("⚠️ Please login again.");
-        window.location.href = "index.html";
-        return;
-      }
-
-      try {
-        const res = await fetch("http://localhost:3000/fetch-data", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-
-        if (!res.ok || data.error) {
-          throw new Error(data.error || "Failed to fetch subjects");
-        }
-
-        // Insert subjects into table
-        data.subjects.forEach(sub => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${sub}</td>
-            <td><input type="number" min="1" max="5" placeholder="Credits"></td>
-            <td><input type="number" min="0" max="30" placeholder="ST-1"></td>
-            <td><input type="number" min="0" max="30" placeholder="ST-2"></td>
-            <td><input type="number" min="0" max="30" placeholder="ST-3"></td>
-            <td><input type="number" min="0" max="100" placeholder="%"></td>
-            <td><input type="number" min="0" max="30" placeholder="Mid-1"></td>
-            <td><input type="number" min="0" max="30" placeholder="Mid-2"></td>
-            <td>
-              <select>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-              </select>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-
-      } catch (err) {
-        console.error(err);
-        alert("❌ Error loading subjects: " + err.message);
-      }
-    }
-
-    document.getElementById("calculateBtn").addEventListener("click", () => {
-      let totalCredits = 0;
-      let weightedSum = 0;
-
-      document.querySelectorAll("#cgpaTable tbody tr").forEach(row => {
-        const credits = parseFloat(row.cells[1].querySelector("input").value) || 0;
-        const st1 = parseFloat(row.cells[2].querySelector("input").value) || 0;
-        const st2 = parseFloat(row.cells[3].querySelector("input").value) || 0;
-        const st3 = parseFloat(row.cells[4].querySelector("input").value) || 0;
-        const attendance = parseFloat(row.cells[5].querySelector("input").value) || 0;
-        const mid1 = parseFloat(row.cells[6].querySelector("input").value) || 0;
-        const mid2 = parseFloat(row.cells[7].querySelector("input").value) || 0;
-        const difficulty = row.cells[8].querySelector("select").value;
-
-        let score = st1 + st2 + st3 + mid1 + mid2 + (attendance / 10);
-
-        if (difficulty === "medium") score *= 0.95;
-        if (difficulty === "hard") score *= 0.9;
-
-        weightedSum += score * credits;
-        totalCredits += credits;
-      });
-
-      const cgpa = totalCredits ? (weightedSum / totalCredits / 10).toFixed(2) : 0;
-      document.getElementById("result").innerHTML = `🎓 Estimated CGPA: <b>${cgpa}</b>`;
-    });
-
-    // Auto-load on page open
-    loadSubjects();
-  </script>
-</body>
 </html>
