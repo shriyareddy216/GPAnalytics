@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ERP Data Fetcher</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <header class="card__header">
+        <h1>GPAnalytics</h1>
+        <p class="muted">Login with ERP credentials and check your previous and upcoming GPA.</p>
+      </header>
+
+      <form id="fetch-form" class="form" onsubmit="event.preventDefault(); goNext();">
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" type="text" placeholder="1601XXXXXXXX" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="••••••••" required />
+        </div>
+
+        <div class="row">
+          <button class="btn" type="submit">Go to CGPA Page</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    function goNext() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (!username || !password) return;
+
+      // Save credentials temporarily in sessionStorage (not permanent!)
+      sessionStorage.setItem("erp_username", username);
+      sessionStorage.setItem("erp_password", password);
+
+      // Redirect to CGPA page
+      window.location.href = "cgpa.html";
+    }
+  </script>
+</body>
+</html>

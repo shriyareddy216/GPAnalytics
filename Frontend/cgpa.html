@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CGPA Result</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Navbar styling */
+    .navbar {
+      background: #007BFF;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .navbar h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 15px;
+    }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .nav-links a:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <!-- 🔹 Navbar -->
+  <nav class="navbar">
+    <h2>ERP Dashboard</h2>
+    <div class="nav-links">
+      <a href="cgpa.html">Prev Data</a>
+      <a href="calculate.html">Calc CGPA</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section class="card card--result">
+      <header class="card__header">
+        <h1>🎓 Your CGPA</h1>
+      </header>
+
+      <div id="alert" class="alert hidden"></div>
+
+      <div id="cgpaBox" class="stat hidden">
+        <div class="stat__label">CGPA</div>
+        <div id="cgpa" class="stat__value">—</div>
+      </div>
+
+      <div class="row">
+        <button class="btn" onclick="fetchCGPA()">🔄 Refresh</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const cgpaBox = document.getElementById("cgpaBox");
+    const cgpaEl = document.getElementById("cgpa");
+    const alertBox = document.getElementById("alert");
+
+    function showAlert(msg, type="error") {
+      alertBox.textContent = msg;
+      alertBox.className = `alert alert--${type}`;
+      alertBox.classList.remove("hidden");
+    }
+    function hideAlert() { alertBox.classList.add("hidden"); }
+
+    async function fetchCGPA() {
+      hideAlert();
+      const username = sessionStorage.getItem("erp_username");
+      const password = sessionStorage.getItem("erp_password");
+
+      if (!username || !password) {
+        showAlert("⚠️ Credentials not found. Go back to login.", "error");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:3000/fetch-data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || "Failed to fetch data");
+        }
+
+        cgpaEl.textContent = data.cgpa || "—";
+        cgpaBox.classList.remove("hidden");
+      } catch (err) {
+        showAlert("❌ " + (err.message || "Error fetching CGPA"));
+      }
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    // Auto fetch on page load
+    fetchCGPA();
+  </script>
+</body>
+</html>
