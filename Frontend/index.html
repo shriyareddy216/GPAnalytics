@@ -198,6 +198,46 @@
       background-clip: text;
       color: transparent;
     }
+    .credits {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--panel); /* darker panel background */
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
+}
+
+.credits p {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.credits a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.credits a:hover {
+  text-decoration: underline;
+}
+
+.linkedin-logo {
+  width: 16px;
+  height: 16px;
+}
+
 
     @media (max-width: 480px) {
       .card__header {
@@ -256,10 +296,22 @@
       </form>
     </section>
     
-    <div class="footer">
-      <p>By continuing, you agree to our <a href="#">Terms of Service</a></p>
-    </div>
+    <!-- Credits Footer -->
+<div class="credits">
+  <p>
+    Made with ❤️ by 
+    <a href="https://www.linkedin.com/in/sneha" target="_blank">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="linkedin-logo"/> Amballa Sneha
+    </a> 
+    &amp; 
+    <a href="https://www.linkedin.com/in/shriya" target="_blank">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="linkedin-logo"/> Shriya Reddy
+    </a>
+  </p>
+</div>
+
   </main>
+  
 
   <script>
     function goNext() {
