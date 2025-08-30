@@ -28,12 +28,39 @@ app.post("/fetch-data", async (req, res) => {
     await page.type("#txtPassword", password, { delay: 100 });
     await page.click("#btnSubmit");
 
-    // CGPA
+    // Go to semwise marks
     await page.waitForSelector("#ctl00_cpStud_lnkOverallMarksSemwiseMarks", { visible: true });
     await page.click("#ctl00_cpStud_lnkOverallMarksSemwiseMarks");
 
-    await page.waitForSelector("#ctl00_cpStud_lblMarks", { visible: true });
-    const cgpa = await page.$eval("#ctl00_cpStud_lblMarks", el => el.innerText.trim());
+    // Wait for semester tables
+    await page.waitForSelector("#ctl00_cpStud_pnMarks", { visible: true, timeout: 60000 });
+
+    // Scrape semester-wise SGPA/CGPA
+    const semesterData = await page.evaluate(() => {
+        const tables = document.querySelectorAll("#ctl00_cpStud_pnMarks table");
+        const result = [];
+
+        tables.forEach((table) => {
+            const rows = table.querySelectorAll("tr");
+            rows.forEach((row) => {
+                const text = row.innerText;
+                if (text.includes("SGPA:")) {
+                    const sgpaMatch = text.match(/SGPA:\s*([\d.]+)/);
+                    const cgpaMatch = text.match(/CGPA:\s*([\d.]+)/);
+
+                    if (sgpaMatch && cgpaMatch) {
+                        result.push({
+                            SGPA: parseFloat(sgpaMatch[1]),
+                            CGPA: parseFloat(cgpaMatch[1])
+                        });
+                    }
+                }
+            });
+        });
+        console.log(result)
+
+        return result;
+    });
 
     // Go back and fetch subjects
     await Promise.all([
@@ -52,12 +79,14 @@ app.post("/fetch-data", async (req, res) => {
 
     await browser.close();
 
-    res.json({ cgpa, subjects });
+    res.json({ semesterData, subjects });
 
   } catch (err) {
     console.error("❌ Error:", err);
     res.status(500).json({ error: "Failed to fetch data" });
   }
 });
+
+
 
 app.listen(3000, () => console.log("🚀 Server running on http://localhost:3000"));
