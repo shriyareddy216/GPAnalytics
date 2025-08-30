@@ -72,50 +72,82 @@
     .btn__spinner { width:16px; height:16px; border: 2px solid rgba(255,255,255,.65); border-top-color: transparent; border-radius: 50%; transform: scale(0); transition: transform .15s ease; }
     .btn.loading .btn__spinner { transform: scale(1); animation: spin 1s linear infinite; }
     .btn.loading .btn__text { opacity:0; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Loading animation for the entire page */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .page-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid var(--brand, #7c3aed);
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin { 
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); } 
+    }
+    
     .credits {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: var(--panel); /* darker panel background */
-  padding: 12px;
-  text-align: center;
-  font-size: 14px;
-  color: var(--muted);
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
-}
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--panel);
+      padding: 12px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--muted);
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
+    }
 
-.credits p {
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
+    .credits p {
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-.credits a {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--brand);
-  text-decoration: none;
-  font-weight: 600;
-}
+    .credits a {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 600;
+    }
 
-.credits a:hover {
-  text-decoration: underline;
-}
+    .credits a:hover {
+      text-decoration: underline;
+    }
 
-.linkedin-logo {
-  width: 16px;
-  height: 16px;
-}
-
+    .linkedin-logo {
+      width: 16px;
+      height: 16px;
+    }
   </style>
 </head>
 <body>
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="page-spinner"></div>
+  </div>
+
   <nav class="navbar">
     <h2>GPAnalyzer</h2>
     <div class="nav-links">
@@ -145,47 +177,65 @@
       </div>
 
       <div class="row">
-        <button class="btn" onclick="fetchCGPA()">
+        <button id="refreshBtn" class="btn" onclick="fetchCGPA()">
           <span class="btn__text">Refresh CGPA</span>
           <div class="btn__spinner"></div>
         </button>
       </div>
     </section>
   </main>
-  <!-- Credits Footer -->
-<div class="credits">
-  <p>
-    Made with ❤️ by 
-    <a href="https://www.linkedin.com/in/sneha" target="_blank">
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="linkedin-logo"/> Amballa Sneha
-    </a> 
-    &amp; 
-    <a href="https://www.linkedin.com/in/shriya" target="_blank">
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="linkedin-logo"/> Shriya Reddy
-    </a>
-  </p>
-</div>
   
+  <!-- Credits Footer -->
+  <div class="credits">
+    <p>
+      Made with ❤️ by 
+      <a href="https://www.linkedin.com/in/sneha" target="_blank">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="linkedin-logo"/> Amballa Sneha
+      </a> 
+      &amp; 
+      <a href="https://www.linkedin.com/in/shriya" target="_blank">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" class="linkedin-logo"/> Shriya Reddy
+      </a>
+    </p>
+  </div>
 
   <script>
     const cgpaBox = document.getElementById("cgpaBox");
     const cgpaEl = document.getElementById("cgpa");
     const alertBox = document.getElementById("alert");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const loadingOverlay = document.getElementById("loadingOverlay");
 
     function showAlert(msg, type="error") {
       alertBox.textContent = msg;
       alertBox.className = `alert alert--${type}`;
       alertBox.classList.remove("hidden");
     }
-    function hideAlert() { alertBox.classList.add("hidden"); }
+    
+    function hideAlert() { 
+      alertBox.classList.add("hidden"); 
+    }
+    
+    function showLoading() {
+      loadingOverlay.classList.remove("hidden");
+      refreshBtn.classList.add("loading");
+    }
+    
+    function hideLoading() {
+      loadingOverlay.classList.add("hidden");
+      refreshBtn.classList.remove("loading");
+    }
 
     async function fetchCGPA() {
       hideAlert();
+      showLoading();
+      
       const username = sessionStorage.getItem("erp_username");
       const password = sessionStorage.getItem("erp_password");
 
       if (!username || !password) {
         showAlert("⚠️ Credentials not found. Go back to login.", "error");
+        hideLoading();
         return;
       }
 
@@ -224,6 +274,8 @@
 
       } catch (err) {
         showAlert("❌ " + (err.message || "Error fetching CGPA"));
+      } finally {
+        hideLoading();
       }
     }
 
@@ -233,7 +285,9 @@
     }
 
     // Auto fetch on page load
-    fetchCGPA();
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchCGPA();
+    });
   </script>
 </body>
 </html>
