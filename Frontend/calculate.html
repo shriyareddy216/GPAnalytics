@@ -369,25 +369,37 @@
           <li><strong>Difficulty:</strong> Select the perceived difficulty of the subject</li>
         </ul>
       </div>
+      <!-- Add this above the table inside your card -->
+<div class="target-sgpa" style="margin: 0 24px 20px;">
+  <label for="targetSGPA" style="font-weight: 600;">🎯 Target SGPA:</label>
+  <input type="number" id="targetSGPA" min="0" max="10" step="0.01" placeholder="Enter target SGPA" style="margin-top:8px;">
+  <button id="generateBtn" class="btn" style="margin-top:12px;">Generate Suggested Marks</button>
+</div>
 
-      <table id="cgpaTable">
-        <thead>
-          <tr>
-            <th>Subject</th>
-            <th>Credits</th>
-            <th>ST-1</th>
-            <th>ST-2</th>
-            <th>ST-3</th>
-            <th>Attendance (%)</th>
-            <th>Mid-1</th>
-            <th>Mid-2</th>
-            <th>Difficulty</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Subjects will be inserted here -->
-        </tbody>
-      </table>
+
+<!-- Add STs, Attendance, Mids, Assignments, Difficulty, and External required marks -->
+<table id="cgpaTable">
+  <thead>
+    <tr>
+      <th>Subject</th>
+      <th>Credits</th>
+      <th>ST-1</th>
+      <th>ST-2</th>
+      <th>ST-3</th>
+      <th>Attendance</th>
+      <th>Mid-1</th>
+      <th>Mid-2</th>
+      <th>Assignment-1</th>
+      <th>Assignment-2</th>
+      <th>Difficulty</th>
+      <th>External Needed</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Rows will be dynamically inserted -->
+  </tbody>
+</table>
+
 
       <button id="calculateBtn" class="btn">
         <span class="btn__text">Calculate CGPA</span>
@@ -400,88 +412,87 @@
       </div>
     </section>
   </div>
-    <script>
-    const tbody = document.querySelector("#cgpaTable tbody");
+  <script>
+    // Generate rows dynamically
+data.subjects.forEach(sub => {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${sub.name}</td>
+    <td><input type="number" min="1" max="5" placeholder="Credits"></td>
+    <td><input type="number" min="0" max="5" placeholder="ST-1"></td>
+    <td><input type="number" min="0" max="5" placeholder="ST-2"></td>
+    <td><input type="number" min="0" max="5" placeholder="ST-3"></td>
+    <td><input type="number" min="0" max="5" placeholder="Attendance"></td>
+    <td><input type="number" min="0" max="20" placeholder="Mid-1"></td>
+    <td><input type="number" min="0" max="20" placeholder="Mid-2"></td>
+    <td><input type="number" min="0" max="10" placeholder="Assignment-1"></td>
+    <td><input type="number" min="0" max="10" placeholder="Assignment-2"></td>
+    <td>
+      <select>
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </td>
+    <td><input type="text" disabled placeholder="-"></td>
+  `;
+  tbody.appendChild(tr);
+});
 
-    async function loadSubjects() {
-      const username = sessionStorage.getItem("erp_username");
-      const password = sessionStorage.getItem("erp_password");
+// Function to calculate external marks needed
+function calculateExternalMarks(row, targetScorePerSubject) {
+  const st1 = parseFloat(row.cells[2].querySelector("input").value) || 0;
+  const st2 = parseFloat(row.cells[3].querySelector("input").value) || 0;
+  const st3 = parseFloat(row.cells[4].querySelector("input").value) || 0;
+  const attendance = parseFloat(row.cells[5].querySelector("input").value) || 0;
+  const mid1 = parseFloat(row.cells[6].querySelector("input").value) || 0;
+  const mid2 = parseFloat(row.cells[7].querySelector("input").value) || 0;
+  const ass1 = parseFloat(row.cells[8].querySelector("input").value) || 0;
+  const ass2 = parseFloat(row.cells[9].querySelector("input").value) || 0;
 
-      if (!username || !password) {
-        alert("⚠️ Please login again.");
-        window.location.href = "index.html";
-        return;
-      }
+  const internalTotal = st1 + st2 + st3 + attendance + mid1 + mid2 + ass1 + ass2;
 
-      try {
-        const res = await fetch("http://localhost:3000/fetch-data", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
+  const externalMax = row.dataset.type === "lab" ? 50 : 60;
 
-        if (!res.ok || data.error) {
-          throw new Error(data.error || "Failed to fetch subjects");
-        }
+  let needed = targetScorePerSubject - internalTotal;
+  if (needed < 0) needed = 0;
+  if (needed > externalMax) needed = externalMax;
 
-        // Insert subjects into table
-        data.subjects.forEach(sub => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${sub}</td>
-            <td><input type="number" min="1" max="5" placeholder="Credits"></td>
-            <td><input type="number" min="0" max="30" placeholder="ST-1"></td>
-            <td><input type="number" min="0" max="30" placeholder="ST-2"></td>
-            <td><input type="number" min="0" max="30" placeholder="ST-3"></td>
-            <td><input type="number" min="0" max="100" placeholder="%"></td>
-            <td><input type="number" min="0" max="30" placeholder="Mid-1"></td>
-            <td><input type="number" min="0" max="30" placeholder="Mid-2"></td>
-            <td>
-              <select>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-              </select>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
+  row.cells[11].querySelector("input").value = needed.toFixed(1);
+}
 
-      } catch (err) {
-        console.error(err);
-        alert("❌ Error loading subjects: " + err.message);
-      }
-    }
+// On generate suggested marks
+document.getElementById("generateBtn").addEventListener("click", () => {
+  const targetSGPA = parseFloat(document.getElementById("targetSGPA").value);
+  if (!targetSGPA) return alert("Enter a valid SGPA");
 
-    document.getElementById("calculateBtn").addEventListener("click", () => {
-      let totalCredits = 0;
-      let weightedSum = 0;
+  let totalCredits = 0;
+  const rows = document.querySelectorAll("#cgpaTable tbody tr");
+  rows.forEach(r => {
+    totalCredits += parseFloat(r.cells[1].querySelector("input").value) || 0;
+  });
 
-      document.querySelectorAll("#cgpaTable tbody tr").forEach(row => {
-        const credits = parseFloat(row.cells[1].querySelector("input").value) || 0;
-        const st1 = parseFloat(row.cells[2].querySelector("input").value) || 0;
-        const st2 = parseFloat(row.cells[3].querySelector("input").value) || 0;
-        const st3 = parseFloat(row.cells[4].querySelector("input").value) || 0;
-        const attendance = parseFloat(row.cells[5].querySelector("input").value) || 0;
-        const mid1 = parseFloat(row.cells[6].querySelector("input").value) || 0;
-        const mid2 = parseFloat(row.cells[7].querySelector("input").value) || 0;
-        const difficulty = row.cells[8].querySelector("select").value;
+  rows.forEach(row => {
+    const credits = parseFloat(row.cells[1].querySelector("input").value) || 0;
+    const difficulty = row.cells[10].querySelector("select").value;
+    let targetScore = (credits / totalCredits) * targetSGPA * 100; // scale to marks
 
-        let score = st1 + st2 + st3 + mid1 + mid2 + (attendance / 10);
+    if (difficulty === "medium") targetScore /= 0.95;
+    if (difficulty === "hard") targetScore /= 0.9;
 
-        if (difficulty === "medium") score *= 0.95;
-        if (difficulty === "hard") score *= 0.9;
+    // Distribute internal marks proportionally
+    row.cells[2].querySelector("input").value = Math.min(targetScore * 0.05, 5).toFixed(1);
+    row.cells[3].querySelector("input").value = Math.min(targetScore * 0.05, 5).toFixed(1);
+    row.cells[4].querySelector("input").value = Math.min(targetScore * 0.05, 5).toFixed(1);
+    row.cells[5].querySelector("input").value = Math.min(targetScore * 0.05, 5).toFixed(1);
+    row.cells[6].querySelector("input").value = Math.min(targetScore * 0.2, 20).toFixed(1);
+    row.cells[7].querySelector("input").value = Math.min(targetScore * 0.2, 20).toFixed(1);
+    row.cells[8].querySelector("input").value = Math.min(targetScore * 0.1, 10).toFixed(1);
+    row.cells[9].querySelector("input").value = Math.min(targetScore * 0.1, 10).toFixed(1);
 
-        weightedSum += score * credits;
-        totalCredits += credits;
-      });
+    calculateExternalMarks(row, targetScore);
+  });
+});
 
-      const cgpa = totalCredits ? (weightedSum / totalCredits / 10).toFixed(2) : 0;
-      document.getElementById("result").innerHTML = `🎓 Estimated CGPA: <b>${cgpa}</b>`;
-    });
-
-    // Auto-load on page open
-    loadSubjects();
   </script>
 </html>

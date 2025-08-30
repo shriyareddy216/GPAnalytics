@@ -1,4 +1,4 @@
-:root{
+/* :root{
   --bg: #0b1020;
   --panel: #121933;
   --panel-2: #0f162e;
@@ -184,4 +184,4 @@ input:focus{
   .wrap{ margin: 3vh auto; }
   .row{ flex-direction: column; align-items: stretch; }
   .search{ max-width: 100%; }
-}
+} */
