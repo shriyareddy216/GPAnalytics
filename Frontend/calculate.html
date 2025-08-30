@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CGPA Calculation</title>
-  <link rel="stylesheet" href="styles.css">
-    <style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <style>
     :root {
       --bg: #0f172a;
       --panel: #1e293b;
@@ -21,321 +21,353 @@
       --radius: 16px;
       --shadow: 0 10px 24px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.25);
       --gradient: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+      --success: rgba(16, 185, 129, 0.15);
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     html, body {
       height: 100%;
-      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      font-family: 'Inter', ui-sans-serif, system-ui;
       background: radial-gradient(ellipse at top left, #1e293b 0%, #0f172a 70%);
       color: var(--text);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
-
-    /* Navbar styling */
-    .navbar {
-      background: var(--panel);
-      color: white;
-      display: flex;
-      justify-content: space-between;
+    
+    .navbar { 
+      background: var(--panel); 
+      display: flex; 
+      justify-content: space-between; 
+      padding: 16px 24px; 
       align-items: center;
-      padding: 16px 24px;
       box-shadow: var(--shadow);
-      position: sticky;
-      top: 0;
-      z-index: 100;
     }
     
-    .navbar h2 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 700;
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+    .navbar h2 { 
+      font-size: 18px; 
+      font-weight: 700; 
+      background: var(--gradient); 
+      -webkit-background-clip: text; 
+      background-clip: text; 
+      color: transparent; 
     }
     
-    .nav-links {
-      display: flex;
-      gap: 20px;
+    .nav-links { 
+      display: flex; 
+      gap: 20px; 
     }
     
-    .nav-links a {
+    .nav-links a { 
+      color: var(--muted); 
+      text-decoration: none; 
+      font-size: 14px; 
+      transition: color 0.3s ease;
+    }
+    
+    .nav-links a:hover { 
+      color: var(--text); 
+    }
+    
+    body { 
+      display: flex; 
+      flex-direction: column; 
+    }
+    
+    .container { 
+      flex: 1; 
+      max-width: 1200px; 
+      margin: 30px auto; 
+      padding: 20px; 
+      width: 100%;
+    }
+    
+    .card { 
+      background: var(--panel); 
+      border-radius: var(--radius); 
+      margin-bottom: 24px; 
+      position: relative; 
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    
+    .card::before { 
+      content: ''; 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      height: 6px; 
+      background: var(--gradient); 
+    }
+    
+    .card__header { 
+      padding: 24px; 
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    
+    .card__header h1 { 
+      font-size: 24px; 
+      font-weight: 700; 
+      margin-bottom: 8px;
+    }
+    
+    .muted {
       color: var(--muted);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
       font-size: 14px;
     }
     
-    .nav-links a:hover {
-      color: var(--text);
-    }
-
-    body {
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .container {
-      flex: 1;
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 20px;
-      width: 100%;
-    }
-
-    .card {
-      background: var(--panel);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      position: relative;
-      margin-bottom: 24px;
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 6px;
-      background: var(--gradient);
-    }
-
-    .card__header {
-      padding: 24px 24px 16px;
-    }
-
-    .card__header h1 {
-      margin: 0 0 8px;
-      font-size: 24px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.5;
-    }
-
-    .alert {
-      padding: 14px 18px;
-      border-radius: 12px;
-      margin: 0 24px 20px;
-      border: 1px solid transparent;
-      background: rgba(255,255,255,.04);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .alert--error { 
-      border-color: rgba(239, 68, 68, .5); 
-      background: rgba(239, 68, 68, .14); 
-      color: #ffdede; 
-    }
-    
-    .alert--info { 
-      border-color: rgba(14, 165, 233, .5); 
-      background: rgba(14, 165, 233, .14); 
-      color: #e8f4ff; 
-    }
-    
-    .alert--success { 
-      border-color: rgba(16, 185, 129, .5); 
-      background: rgba(16, 185, 129, .14); 
-      color: #e7fff5; 
-    }
-    
-    .hidden { 
-      display: none !important; 
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
       background: var(--panel-2);
-      border-radius: 12px;
+      margin-bottom: 24px;
+      border-radius: var(--radius);
       overflow: hidden;
-      margin: 0 0 24px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    th, td {
-      padding: 14px 16px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    
-    th {
-      background: rgba(124, 58, 237, 0.15);
-      color: var(--text);
-      font-weight: 600;
       font-size: 14px;
     }
-    
-    tr:last-child td {
-      border-bottom: none;
+
+    /* Header styling */
+    th {
+      background: rgba(124, 58, 237, 0.2);
+      font-weight: 600;
+      font-size: 13px;
+      text-align: center;
+      padding: 12px 8px;
+      color: var(--text);
+      position: sticky;
+      top: 0;
     }
-    
-    tr:hover {
-      background: rgba(255, 255, 255, 0.03);
+
+    /* Body rows */
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
     }
-    
+
+    /* Zebra striping */
+    tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Hover highlight */
+    tbody tr:hover {
+      background: rgba(124, 58, 237, 0.12);
+    }
+
+    /* Input and select box styles */
     input, select {
-      width: 100%;
-      padding: 10px 12px;
+      width: 90px;
+      padding: 8px;
       border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
       background: var(--panel);
       color: var(--text);
-      outline: none;
-      font-size: 14px;
-    }
-    
-    input:focus, select:focus {
-      border-color: var(--brand);
-      box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
-    }
-    
-    input::placeholder {
-      color: #64748b;
-    }
-
-    .btn {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px 20px;
-      border: none;
-      border-radius: 12px;
-      background: var(--gradient);
-      color: white;
-      font-weight: 600;
-      font-size: 15px;
-      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 13px;
+      text-align: center;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-      margin: 0 24px 24px;
     }
 
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3);
+    }
+
+    input::placeholder {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    select {
+      width: 100px;
+      cursor: pointer;
+    }
+    
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      padding: 0 24px;
+      margin-bottom: 24px;
+    }
+    
+    .btn { 
+      padding: 14px 20px; 
+      border-radius: 12px; 
+      background: var(--gradient); 
+      color: white; 
+      font-weight: 600; 
+      cursor: pointer; 
+      border: none;
+      transition: all 0.3s ease;
+      min-width: 140px;
+    }
+    
     .btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2), 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
-
-    .btn:active {
-      transform: translateY(0);
+    
+    .btn-secondary {
+      background: var(--panel-2);
+      color: var(--text);
     }
-
-    .result {
-      padding: 20px 24px;
+    
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .result { 
+      padding: 20px; 
+      background: var(--success); 
+      border-radius: 12px; 
+      margin: 0 24px 24px; 
+      text-align: center;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .result-value { 
+      font-size: 42px; 
+      font-weight: 800; 
+      background: var(--gradient); 
+      -webkit-background-clip: text; 
+      background-clip: text; 
+      color: transparent; 
+      margin: 10px 0;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .subject-name {
+      font-weight: 500;
+      text-align: left;
+      padding-left: 16px;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      margin: 0 0 24px 0;
+      padding: 0 16px;
+    }
+    
+    .table-scroll {
+      min-width: 1200px;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification.success {
+      border-left: 4px solid var(--accent);
+    }
+    
+    .notification.error {
+      border-left: 4px solid var(--danger);
+    }
+    
+    .grade-breakdown {
+      padding: 16px 24px;
+      margin: 0 24px 24px;
       background: var(--panel-2);
       border-radius: 12px;
-      margin: 0 24px 24px;
-      text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.08);
     }
     
-    .result h3 {
-      margin: 0 0 12px;
+    .grade-breakdown h3 {
+      margin-bottom: 16px;
       font-size: 18px;
-      font-weight: 600;
       color: var(--muted);
     }
     
-    .result-value {
-      font-size: 42px;
-      font-weight: 800;
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .instructions {
-      padding: 0 24px 24px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
+    .grade-table {
+      width: 100%;
+      border-collapse: collapse;
     }
     
-    .instructions ul {
-      padding-left: 20px;
-      margin: 12px 0;
+    .grade-table th {
+      background: rgba(16, 185, 129, 0.1);
     }
     
-    .instructions li {
-      margin-bottom: 6px;
+    .grade-table td:first-child,
+    .grade-table th:first-child {
+      text-align: left;
+      padding-left: 16px;
     }
-
+    
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid var(--brand);
+      animation: spin 1s linear infinite;
+    }
+    
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
     @media (max-width: 768px) {
       .navbar {
-        padding: 14px 16px;
         flex-direction: column;
-        gap: 12px;
-      }
-      
-      .nav-links {
         gap: 16px;
-      }
-      
-      .container {
-        margin: 20px auto;
         padding: 16px;
       }
       
-      table {
-        display: block;
-        overflow-x: auto;
+      .nav-links {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .container {
+        padding: 10px;
       }
       
       .card__header {
-        padding: 20px 20px 12px;
+        padding: 16px;
       }
       
-      th, td {
-        padding: 12px;
-        font-size: 13px;
-      }
-      
-      input, select {
-        padding: 8px 10px;
-        font-size: 13px;
+      .btn-container {
+        flex-direction: column;
+        padding: 0 16px;
       }
       
       .btn {
-        margin: 0 20px 20px;
-        width: calc(100% - 40px);
-      }
-      
-      .result {
-        margin: 0 20px 20px;
-      }
-      
-      .instructions {
-        padding: 0 20px 20px;
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <!-- 🔹 Navbar -->
+
   <nav class="navbar">
     <h2>GPAnalytics Dashboard</h2>
     <div class="nav-links">
@@ -349,150 +381,426 @@
     <section class="card">
       <header class="card__header">
         <h1>📊 CGPA Calculator</h1>
-        <p class="muted">Estimate your CGPA by entering your subject scores and credits.</p>
+        <p class="muted">Estimate your CGPA by entering your subject scores and credits. Values will be automatically validated.</p>
       </header>
 
-      <div id="alert" class="alert hidden">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 9V11M12 15H12.01M5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <span id="alert-message"></span>
+      <div class="table-container">
+        <div class="table-scroll">
+          <!-- Subjects Table -->
+          <table id="cgpaTable">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Credits</th>
+                <th>Assignment-1 (10)</th>
+                <th>Assignment-2 (10)</th>
+                <th>ST-1 (5)</th>
+                <th>ST-2 (5)</th>
+                <th>ST-3 (5)</th>
+                <th>Attendance (5)</th>
+                <th>Mid-1 (20)</th>
+                <th>Mid-2 (20)</th>
+                <th>External (60)</th>
+                <th>Difficulty</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="12" class="loading">
+                  <div class="spinner"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div class="instructions">
-        <p>Fill in the details for each subject:</p>
-        <ul>
-          <li><strong>Credits:</strong> The credit weight of the subject (1-5)</li>
-          <li><strong>ST-1, ST-2, ST-3:</strong> Scores for semester tests (0-30)</li>
-          <li><strong>Attendance:</strong> Percentage of classes attended (0-100)</li>
-          <li><strong>Mid-1, Mid-2:</strong> Midterm exam scores (0-30)</li>
-          <li><strong>Difficulty:</strong> Select the perceived difficulty of the subject</li>
-        </ul>
+      <div class="table-container">
+        <div class="table-scroll">
+          <!-- Labs Table -->
+          <table id="labTable">
+            <thead>
+              <tr>
+                <th>Lab Subject</th>
+                <th>Credits</th>
+                <th>Internal-1 (20)</th>
+                <th>Internal-2 (20)</th>
+                <th>CIE (30)</th>
+                <th>External (50)</th>
+                <th>Difficulty</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="7" class="loading">
+                  <div class="spinner"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <!-- Add this above the table inside your card -->
-<div class="target-sgpa" style="margin: 0 24px 20px;">
-  <label for="targetSGPA" style="font-weight: 600;">🎯 Target SGPA:</label>
-  <input type="number" id="targetSGPA" min="0" max="10" step="0.01" placeholder="Enter target SGPA" style="margin-top:8px;">
-  <button id="generateBtn" class="btn" style="margin-top:12px;">Generate Suggested Marks</button>
-</div>
 
-
-<!-- Add STs, Attendance, Mids, Assignments, Difficulty, and External required marks -->
-<table id="cgpaTable">
-  <thead>
-    <tr>
-      <th>Subject</th>
-      <th>Credits</th>
-      <th>ST-1</th>
-      <th>ST-2</th>
-      <th>ST-3</th>
-      <th>Attendance</th>
-      <th>Mid-1</th>
-      <th>Mid-2</th>
-      <th>Assignment-1</th>
-      <th>Assignment-2</th>
-      <th>Difficulty</th>
-      <th>External Needed</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Rows will be dynamically inserted -->
-  </tbody>
-</table>
-
-
-      <button id="calculateBtn" class="btn">
-        <span class="btn__text">Calculate CGPA</span>
-        <div class="btn__spinner"></div>
-      </button>
+      <div class="btn-container">
+        <button id="calculateBtn" class="btn">Calculate CGPA</button>
+        <button id="resetBtn" class="btn btn-secondary">Reset Form</button>
+      </div>
 
       <div id="result" class="result hidden">
         <h3>Estimated CGPA</h3>
         <div id="cgpaValue" class="result-value">—</div>
+        <p class="muted">Based on your input values and difficulty adjustments</p>
+      </div>
+
+      <div id="gradeBreakdown" class="grade-breakdown hidden">
+        <h3>Subject-wise Grade Breakdown</h3>
+        <table class="grade-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Credits</th>
+              <th>Total Score</th>
+              <th>Grade Point</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="breakdownBody">
+            <!-- Will be populated by JavaScript -->
+          </tbody>
+        </table>
       </div>
     </section>
   </div>
+
+  <div id="notification" class="notification hidden">
+    <span id="notificationMessage"></span>
+  </div>
+
   <script>
-    // Generate rows dynamically
-data.subjects.forEach(sub => {
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td>${sub.name}</td>
-    <td><input type="number" min="1" max="5" placeholder="Credits"></td>
-    <td><input type="number" min="0" max="5" placeholder="ST-1"></td>
-    <td><input type="number" min="0" max="5" placeholder="ST-2"></td>
-    <td><input type="number" min="0" max="5" placeholder="ST-3"></td>
-    <td><input type="number" min="0" max="5" placeholder="Attendance"></td>
-    <td><input type="number" min="0" max="20" placeholder="Mid-1"></td>
-    <td><input type="number" min="0" max="20" placeholder="Mid-2"></td>
-    <td><input type="number" min="0" max="10" placeholder="Assignment-1"></td>
-    <td><input type="number" min="0" max="10" placeholder="Assignment-2"></td>
-    <td>
-      <select>
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
-      </select>
-    </td>
-    <td><input type="text" disabled placeholder="-"></td>
-  `;
-  tbody.appendChild(tr);
-});
+    // DOM Elements
+    const tbody = document.querySelector("#cgpaTable tbody");
+    const labTbody = document.querySelector("#labTable tbody");
+    const calculateBtn = document.getElementById("calculateBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const resultDiv = document.getElementById("result");
+    const cgpaValue = document.getElementById("cgpaValue");
+    const gradeBreakdown = document.getElementById("gradeBreakdown");
+    const breakdownBody = document.getElementById("breakdownBody");
+    const notification = document.getElementById("notification");
+    const notificationMessage = document.getElementById("notificationMessage");
+    // Show notification function
+    function showNotification(message, type = "success") {
+      notificationMessage.textContent = message;
+      notification.className = `notification ${type} show`;
+      
+      setTimeout(() => {
+        notification.classList.remove("show");
+      }, 3000);
+    }
 
-// Function to calculate external marks needed
-function calculateExternalMarks(row, targetScorePerSubject) {
-  const st1 = parseFloat(row.cells[2].querySelector("input").value) || 0;
-  const st2 = parseFloat(row.cells[3].querySelector("input").value) || 0;
-  const st3 = parseFloat(row.cells[4].querySelector("input").value) || 0;
-  const attendance = parseFloat(row.cells[5].querySelector("input").value) || 0;
-  const mid1 = parseFloat(row.cells[6].querySelector("input").value) || 0;
-  const mid2 = parseFloat(row.cells[7].querySelector("input").value) || 0;
-  const ass1 = parseFloat(row.cells[8].querySelector("input").value) || 0;
-  const ass2 = parseFloat(row.cells[9].querySelector("input").value) || 0;
+    // Validate input values with maximum limits
+    function validateInput(input, max) {
+      const value = parseFloat(input.value);
+      if (isNaN(value)) {
+        input.value = "";
+        return 0;
+      }
+      
+      if (value > max) {
+        input.value = max;
+        showNotification(`Value cannot exceed ${max}. Adjusted to maximum.`, "error");
+        return max;
+      }
+      
+      if (value < 0) {
+        input.value = 0;
+        showNotification("Value cannot be negative. Adjusted to 0.", "error");
+        return 0;
+      }
+      
+      return value;
+    }
 
-  const internalTotal = st1 + st2 + st3 + attendance + mid1 + mid2 + ass1 + ass2;
+    // Calculate grade from score
+    function calculateGrade(score) {
+      if (score >= 90) return { grade: 'S', point: 10 };
+      if (score >= 80) return { grade: 'A', point: 9 };
+      if (score >= 70) return { grade: 'B', point: 8 };
+      if (score >= 60) return { grade: 'C', point: 7 };
+      if (score >= 50) return { grade: 'D', point: 6 };
+      if (score >= 40) return { grade: 'E', point: 5 };
+      return { grade: 'F', point: 0 };
+    }
 
-  const externalMax = row.dataset.type === "lab" ? 50 : 60;
+    // Logout function
+    function logout() {
+      sessionStorage.removeItem("erp_username");
+      sessionStorage.removeItem("erp_password");
+      window.location.href = "index.html";
+    }
 
-  let needed = targetScorePerSubject - internalTotal;
-  if (needed < 0) needed = 0;
-  if (needed > externalMax) needed = externalMax;
+    // Load subjects from server
+    async function loadSubjects() {
+      
+      const username = sessionStorage.getItem("erp_username");
+      const password = sessionStorage.getItem("erp_password");
 
-  row.cells[11].querySelector("input").value = needed.toFixed(1);
-}
+      if (!username || !password) {
+        showNotification("Please login again", "error");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+        return;
+      }
 
-// On generate suggested marks
-document.getElementById("generateBtn").addEventListener("click", () => {
-  const targetSGPA = parseFloat(document.getElementById("targetSGPA").value);
-  if (!targetSGPA) return alert("Enter a valid SGPA");
+      try {
+        const res = await fetch("http://localhost:3000/fetch-data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
 
-  let totalCredits = 0;
-  const rows = document.querySelectorAll("#cgpaTable tbody tr");
-  rows.forEach(r => {
-    totalCredits += parseFloat(r.cells[1].querySelector("input").value) || 0;
-  });
+        if (!res.ok || data.error) {
+          throw new Error(data.error || "Failed to fetch subjects");
+        }
 
-  rows.forEach(row => {
-    const credits = parseFloat(row.cells[1].querySelector("input").value) || 0;
-    const difficulty = row.cells[10].querySelector("select").value;
-    let targetScore = (credits / totalCredits) * targetSGPA * 100; // scale to marks
+        // Clear loading indicator
+        tbody.innerHTML = "";
+        labTbody.innerHTML = "";
+        
+        data.subjects.forEach(sub => {
+          const tr = document.createElement("tr");
+          if (sub.toUpperCase().includes("LAB")) {
+            tr.innerHTML = `
+              <td class="subject-name">${sub}</td>
+              <td><input type="number" min="1" max="5" placeholder="Credits" class="credit-input"></td>
+              <td><input type="number" min="0" max="20" placeholder="0-20" class="score-input" data-max="20"></td>
+              <td><input type="number" min="0" max="20" placeholder="0-20" class="score-input" data-max="20"></td>
+              <td><input type="number" min="0" max="30" placeholder="0-30" class="score-input" data-max="30"></td>
+              <td><input type="number" min="0" max="50" placeholder="0-50" class="score-input" data-max="50"></td>
+              <td>
+                <select class="difficulty-select">
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </td>
+            `;
+            labTbody.appendChild(tr);
+          } else {
+            tr.innerHTML = `
+              <td class="subject-name">${sub}</td>
+              <td><input type="number" min="1" max="5" placeholder="Credits" class="credit-input"></td>
+              <td><input type="number" min="0" max="10" placeholder="0-10" class="score-input" data-max="10"></td>
+              <td><input type="number" min="0" max="10" placeholder="0-10" class="score-input" data-max="10"></td>
+              <td><input type="number" min="0" max="5" placeholder="0-5" class="score-input" data-max="5"></td>
+              <td><input type="number" min="0" max="5" placeholder="0-5" class="score-input" data-max="5"></td>
+              <td><input type="number" min="0" max="5" placeholder="0-5" class="score-input" data-max="5"></td>
+              <td><input type="number" min="0" max="5" placeholder="0-5" class="score-input" data-max="5"></td>
+              <td><input type="number" min="0" max="20" placeholder="0-20" class="score-input" data-max="20"></td>
+              <td><input type="number" min="0" max="20" placeholder="0-20" class="score-input" data-max="20"></td>
+              <td><input type="number" min="0" max="60" placeholder="0-60" class="score-input" data-max="60"></td>
+              <td>
+                <select class="difficulty-select">
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          }
+        });
 
-    if (difficulty === "medium") targetScore /= 0.95;
-    if (difficulty === "hard") targetScore /= 0.9;
+        // Add input validation
+        document.querySelectorAll('.score-input').forEach(input => {
+          const max = parseInt(input.getAttribute('data-max'));
+          input.addEventListener('change', () => validateInput(input, max));
+          input.addEventListener('blur', () => validateInput(input, max));
+        });
 
-    // Distribute internal marks proportionally
-    row.cells[2].querySelector("input").value = Math.min(targetScore * 0.05, 5).toFixed(1);
-    row.cells[3].querySelector("input").value = Math.min(targetScore * 0.05, 5).toFixed(1);
-    row.cells[4].querySelector("input").value = Math.min(targetScore * 0.05, 5).toFixed(1);
-    row.cells[5].querySelector("input").value = Math.min(targetScore * 0.05, 5).toFixed(1);
-    row.cells[6].querySelector("input").value = Math.min(targetScore * 0.2, 20).toFixed(1);
-    row.cells[7].querySelector("input").value = Math.min(targetScore * 0.2, 20).toFixed(1);
-    row.cells[8].querySelector("input").value = Math.min(targetScore * 0.1, 10).toFixed(1);
-    row.cells[9].querySelector("input").value = Math.min(targetScore * 0.1, 10).toFixed(1);
+        // Add credit validation
+        document.querySelectorAll('.credit-input').forEach(input => {
+          input.addEventListener('change', () => validateInput(input, 5));
+          input.addEventListener('blur', () => validateInput(input, 5));
+        });
 
-    calculateExternalMarks(row, targetScore);
-  });
-});
+      } catch (err) {
+        console.error(err);
+        showNotification("Error loading subjects: " + err.message, "error");
+      } finally {
+        hideLoading();
+      }
+    }
 
+    // Calculate CGPA
+    function calculateCGPA() {
+      let totalCredits = 0;
+      let weightedSum = 0;
+      let allSubjectsValid = true;
+      const breakdown = [];
+
+      // Regular Subjects
+      [...tbody.rows].forEach(row => {
+        const subjectName = row.cells[0].textContent;
+        const creditsInput = row.cells[1].querySelector("input");
+        const credits = parseFloat(creditsInput.value) || 0;
+        
+        // Check if credits are entered
+        if (credits <= 0) {
+          creditsInput.style.borderColor = "var(--danger)";
+          allSubjectsValid = false;
+        } else {
+          creditsInput.style.borderColor = "";
+        }
+        
+        const a1 = parseFloat(row.cells[2].querySelector("input").value) || 0;
+        const a2 = parseFloat(row.cells[3].querySelector("input").value) || 0;
+        const st1 = parseFloat(row.cells[4].querySelector("input").value) || 0;
+        const st2 = parseFloat(row.cells[5].querySelector("input").value) || 0;
+        const st3 = parseFloat(row.cells[6].querySelector("input").value) || 0;
+        const att = parseFloat(row.cells[7].querySelector("input").value) || 0;
+        const mid1 = parseFloat(row.cells[8].querySelector("input").value) || 0;
+        const mid2 = parseFloat(row.cells[9].querySelector("input").value) || 0;
+        const ext = parseFloat(row.cells[10].querySelector("input").value) || 0;
+        const difficulty = row.cells[11].querySelector("select").value;
+
+        const assignmentAvg = (a1 + a2) / 2;
+        const sts = [st1, st2, st3].sort((a, b) => b - a).slice(0, 2);
+        const stAvg = sts.length ? (sts[0] + sts[1]) / 2 : 0;
+
+        let internal = assignmentAvg + stAvg + att + mid1 + mid2;
+        let score = internal + ext;
+        
+        // Apply difficulty adjustment
+        let adjustment = 1;
+        if (difficulty === "medium") adjustment = 0.95;
+        if (difficulty === "hard") adjustment = 0.9;
+        
+        const adjustedScore = score * adjustment;
+        const gradeInfo = calculateGrade(adjustedScore);
+        
+        if (credits > 0) {
+          weightedSum += gradeInfo.point * credits;
+          totalCredits += credits;
+        }
+        
+        breakdown.push({
+          name: subjectName,
+          credits: credits,
+          score: adjustedScore,
+          grade: gradeInfo.grade,
+          point: gradeInfo.point,
+          status: gradeInfo.point > 0 ? "Pass" : "Fail"
+        });
+      });
+
+      // Lab Subjects
+      [...labTbody.rows].forEach(row => {
+        const subjectName = row.cells[0].textContent;
+        const creditsInput = row.cells[1].querySelector("input");
+        const credits = parseFloat(creditsInput.value) || 0;
+        
+        // Check if credits are entered
+        if (credits <= 0) {
+          creditsInput.style.borderColor = "var(--danger)";
+          allSubjectsValid = false;
+        } else {
+          creditsInput.style.borderColor = "";
+        }
+        
+        const int1 = parseFloat(row.cells[2].querySelector("input").value) || 0;
+        const int2 = parseFloat(row.cells[3].querySelector("input").value) || 0;
+        const cie = parseFloat(row.cells[4].querySelector("input").value) || 0;
+        const ext = parseFloat(row.cells[5].querySelector("input").value) || 0;
+        const difficulty = row.cells[6].querySelector("select").value;
+
+        const internalAvg = (int1 + int2) / 2;
+        let internal = internalAvg + cie;
+        if (internal > 50) internal = 50;
+
+        let score = internal + ext;
+        
+        // Apply difficulty adjustment
+        let adjustment = 1;
+        if (difficulty === "medium") adjustment = 0.95;
+        if (difficulty === "hard") adjustment = 0.9;
+        
+        const adjustedScore = score * adjustment;
+        const gradeInfo = calculateGrade(adjustedScore);
+        
+        if (credits > 0) {
+          weightedSum += gradeInfo.point * credits;
+          totalCredits += credits;
+        }
+        
+        breakdown.push({
+          name: subjectName,
+          credits: credits,
+          score: adjustedScore,
+          grade: gradeInfo.grade,
+          point: gradeInfo.point,
+          status: gradeInfo.point > 0 ? "Pass" : "Fail"
+        });
+      });
+
+      if (!allSubjectsValid) {
+        showNotification("Please enter credits for all subjects", "error");
+        return;
+      }
+
+      if (totalCredits === 0) {
+        showNotification("Please enter at least one subject with credits", "error");
+        return;
+      }
+
+      const cgpa = (weightedSum / totalCredits).toFixed(2);
+      resultDiv.classList.remove("hidden");
+      cgpaValue.textContent = cgpa;
+      
+      // Show grade breakdown
+      gradeBreakdown.classList.remove("hidden");
+      breakdownBody.innerHTML = "";
+      
+      breakdown.forEach(subject => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${subject.name}</td>
+          <td>${subject.credits}</td>
+          <td>${subject.score.toFixed(2)}</td>
+          <td>${subject.grade} (${subject.point})</td>
+          <td style="color: ${subject.status === 'Pass' ? 'var(--accent)' : 'var(--danger)'}">${subject.status}</td>
+        `;
+        breakdownBody.appendChild(tr);
+      });
+      
+      showNotification(`CGPA calculated successfully: ${cgpa}`);
+    }
+
+    // Reset form
+    function resetForm() {
+      document.querySelectorAll('input').forEach(input => {
+        input.value = '';
+        input.style.borderColor = '';
+      });
+      
+      document.querySelectorAll('select').forEach(select => {
+        select.selectedIndex = 0;
+      });
+      
+      resultDiv.classList.add("hidden");
+      gradeBreakdown.classList.add("hidden");
+      
+      showNotification("Form has been reset");
+    }
+
+    // Event listeners
+    calculateBtn.addEventListener("click", calculateCGPA);
+    resetBtn.addEventListener("click", resetForm);
+
+    // Initialize
+    loadSubjects();
   </script>
+</body>
 </html>
